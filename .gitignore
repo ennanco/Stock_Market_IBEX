@@ -1,0 +1,11 @@
+# Compiled files
+*.pyc
+*.npy
+
+# Dataset
+*.h5
+*.hdf5
+*.csv
+
+# miscelaneous
+__pycache__/
