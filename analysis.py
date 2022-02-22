@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+
+"""
+Script to download Yahoo historical quotes using the new cookie authenticated site.
+ Usage: analysis.py [Start_Date [End_Date]]
+"""
+
 import os
 import re
 import sys
@@ -9,7 +16,7 @@ import requests
 import pandas as pd
 import numpy as np
 
-yahoo_stock_url = "https://finance.yahoo.com/quote/%s/?p=%s" 
+yahoo_stock_url = "https://finance.yahoo.com/quote/%s/?p=%s"
 yahoo_data_url =  "https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%s&period2=%s&interval=1d&events=history&crumb=%s"
 
 ####################################
@@ -17,7 +24,7 @@ yahoo_data_url =  "https://query1.finance.yahoo.com/v7/finance/download/%s?perio
 ####################################
 
 def if_not_create_folder(name):
-    """check the existance of a folder and if  it is needed, the folder is created""" 
+    """check the existance of a folder and if  it is needed, the folder is created"""
     if not os.path.exists(name):
         os.makedirs(name)
 
@@ -26,8 +33,8 @@ def datestring_to_timestamp(s, default=0):
     """ This function transforms an string with a date into a linux-format timestamp"""
     if s is None:
         return default
-    else: 
-        return int(time.mktime(datetime.datetime.strptime(s, "%Y-%m-%d").timetuple())) 
+    else:
+        return int(time.mktime(datetime.datetime.strptime(s, "%Y-%m-%d").timetuple()))
 
 
 #####################################
@@ -111,12 +118,12 @@ def get_stocks_data(index_name, stocks_name_list, start_date_str= None, end_date
     dates = pd.date_range(start_date_str, end_date_str)
     df_stocks = pd.DataFrame(index=dates)
 
-    
+
     df_stocks = df_stocks.join(read_stock(index_name, prefix=folder), how='inner')
     df_stocks = df_stocks.dropna()
 
     for symbol in stocks_name_list:
-        df_stocks = df_stocks.join(read_stock(symbol, prefix=folder), how='left') 
+        df_stocks = df_stocks.join(read_stock(symbol, prefix=folder), how='left')
 
     df_stocks.fillna(method='ffill', inplace=True)
     df_stocks.fillna(method='bfill', inplace=True)
@@ -130,10 +137,10 @@ if __name__ == '__main__':
     # If we have at least one parameter go ahead and loop overa all the parameters assuming they are symbols
     index = '^IBEX'
     symbols = ['ANA.MC', 'ACX.MC', 'ACS.MC', 'AENA.MC', 'AMS.MC', 'MTS.MC', 'SAB.MC',
-               'SAN.MC', 'BKIA.MC', 'BKT.MC', 'BBVA.MC', 'CABK.MC', 'CLNX.MC', 'CIE.MC', 
+               'SAN.MC', 'BKIA.MC', 'BKT.MC', 'BBVA.MC', 'CABK.MC', 'CLNX.MC', 'CIE.MC',
                'ENG.MC', 'ENC.MC', 'ELE.MC', 'FER.MC', 'GRF.MC', 'IAG.MC', 'IBE.MC',
                'ITX.MC', 'IDR.MC', 'COL.MC', 'MAP.MC', 'TL5.MC', 'MEL.MC', 'MRL.MC',
-               'NTGY.MC', 'REE.MC', 'REP.MC', 'SGRE.MC', 'TRE.MC', 'TEF.MC', 'VIS.MC' ] 
+               'NTGY.MC', 'REE.MC', 'REP.MC', 'SGRE.MC', 'TRE.MC', 'TEF.MC', 'VIS.MC' ]
 
     if len(sys.argv) > 2:
         start_date_string = sys.argv[1]
@@ -144,7 +151,7 @@ if __name__ == '__main__':
     else:
         start_date_string = None
         end_date_string = None
-   
+
     download_symbols([index]+symbols, start_date_string, end_date_string)
     df_stocks_history = get_stocks_data(index, symbols, start_date_string, end_date_string).apply(pd.to_numeric, errors='coerce')
     df_stocks_history.to_csv('IBEX_2018.csv')
@@ -158,19 +165,19 @@ if __name__ == '__main__':
     daily = (df_stocks_history/ df_stocks_history.shift(1) -1)
     daily = daily.dropna()
 
-    
+
 
 
     results = pd.DataFrame()
-    results['Rent. Anual'] = ((df_stocks_history.ix[-1, :]/df_stocks_history.ix[0,:]) - 1)*100
-    results['Rent. Media Diaria'] = daily.mean()*100 
-    results['Rent. Varianza Diaria'] = daily.std()*100
-    results['Sharp'] = np.sqrt(daily.shape[0])*results['Rent. Media Diaria']/results['Rent. Varianza Diaria']
+    results['Yearly'] = ((df_stocks_history.ix[-1, :]/df_stocks_history.ix[0,:]) - 1)*100
+    results['Daily Avg.'] = daily.mean()*100
+    results['Daily Std.'] = daily.std()*100
+    results['Sharp'] = np.sqrt(daily.shape[0])*results['Daily Avg.']/results['Daily Std.']
     results['Beta'] = np.nan
 
-    for s in results.index: 
-       tmp = np.cov(daily[s],daily['^IBEX']) 
+    for s in results.index:
+       tmp = np.cov(daily[s],daily['^IBEX'])
        results['Beta'][s]=tmp[0,1]/tmp[1,1]
- 
-    results['Alpha'] = results['Rent. Media Diaria'] - results['Beta']*results['Rent. Media Diaria']['^IBEX']
-    print(results) 
+
+    results['Alpha'] = results['Daily Avg.'] - results['Beta']*results['Daily Avg.']['^IBEX']
+    print(results)

@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 """
-get-yahoo-quotes.py:  Script to download Yahoo historical quotes using the new cookie authenticated site.
- Usage: get-yahoo-quotes SYMBOL
- History
+Script to download Yahoo historical quotes using the new cookie authenticated site.
+ Usage: python get_stocks.py [Start_Date [End_Date]]
 """
 
 import re
@@ -70,19 +69,20 @@ def download_quotes(symbol, start_date_string=None, end_date_string=None):
         start_date = 0
     else:
         start_date = datestring_to_timestamp(start_date_string)
-    
+
     if end_date_string is None:
         end_date = get_now_epoch()
     else:
         end_date = datestring_to_timestamp(end_date_string)
-    
+
     cookie, crumb = get_cookie_crumb(symbol)
     get_data(symbol, start_date, end_date, cookie, crumb)
 
 
 if __name__ == '__main__':
     # If we have at least one parameter go ahead and loop overa all the parameters assuming they are symbols
-    symbols = ['^IBEX','SAN.MC', 'BBVA.MC', 'MTS.MC', 'ITX.MC'] 
+    # Some examples of simbols to download
+    symbols = ['^IBEX','SAN.MC', 'BBVA.MC', 'MTS.MC', 'ITX.MC']
     if len(sys.argv) > 2:
         start_date_string = sys.argv[1]
         end_date_string = sys.argv[2]
