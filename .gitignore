@@ -6,6 +6,8 @@
 *.h5
 *.hdf5
 *.csv
+output/
 
 # miscelaneous
 __pycache__/
+.venv/

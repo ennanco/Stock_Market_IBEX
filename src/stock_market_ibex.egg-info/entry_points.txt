@@ -1,0 +1,2 @@
+[console_scripts]
+ibex-analyze = ibex.cli:main

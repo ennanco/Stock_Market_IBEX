@@ -1,3 +1,15 @@
+Metadata-Version: 2.4
+Name: stock-market-ibex
+Version: 0.1.0
+Summary: IBEX market data pipeline and metrics with yfinance
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.24
+Requires-Dist: pandas>=1.5
+Requires-Dist: yfinance>=0.2.40
+Dynamic: license-file
+
 # Stock Market IBEX
 
 This project downloads historical market data from Yahoo Finance via `yfinance` and computes a basic risk/return report for IBEX symbols.
@@ -14,24 +26,25 @@ This project downloads historical market data from Yahoo Finance via `yfinance` 
   - `Beta` (vs benchmark)
   - `Alpha` (vs benchmark)
 
-## Setup with uv
+## Installation
 
 ```bash
-uv sync
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
 ```
 
-This creates/updates `.venv` and installs dependencies from `pyproject.toml`.
-
-Run commands with uv (recommended):
+Alternative:
 
 ```bash
-uv run ibex-analyze --help
+pip install -r requirements.txt
+PYTHONPATH=src python -m ibex.cli --help
 ```
 
 ## Usage
 
 ```bash
-uv run ibex-analyze --start 2024-01-01 --end 2024-12-31
+ibex-analyze --start 2024-01-01 --end 2024-12-31
 ```
 
 Optional flags:
