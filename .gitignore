@@ -11,3 +11,4 @@ output/
 # miscelaneous
 __pycache__/
 .venv/
+*.egg-info/
