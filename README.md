@@ -1,5 +1,7 @@
 # Stock Market IBEX
 
+![Maintenance](https://img.shields.io/badge/maintained%3F-no-red.svg)
+
 This project downloads historical market data from Yahoo Finance via `yfinance` and computes a basic risk/return report for IBEX symbols.
 
 ## What it does
